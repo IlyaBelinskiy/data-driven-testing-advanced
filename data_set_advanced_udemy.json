@@ -1,0 +1,34 @@
+[
+    {
+        "customerId": 9000,
+        "productId": 5,
+        "status": 201,
+        "expectedStatus": 201,
+        "isValid": true,
+        "metaInfo": {
+            "categoryId": 4562,
+            "segmentId": 1236,
+            "keywords": "foo, bar, foobar"
+        }
+    },
+    {
+        "customerId": 9001,
+        "productId": 4,
+        "status": 503,
+        "expectedStatus": 503,
+        "isValid": true,
+        "metaInfo": null
+    },
+    {
+        "customerId": 9002,
+        "productId": "3FOO",
+        "status": "foo",
+        "expectedStatus": 400,
+        "isValid": false,
+        "metaInfo": {
+            "categoryId": 5680,
+            "segmentId": 9832,
+            "keywords": "testo, Qwerty, client"
+        }
+    }
+]

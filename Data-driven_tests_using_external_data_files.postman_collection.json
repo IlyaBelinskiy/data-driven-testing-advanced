@@ -1,0 +1,196 @@
+{
+	"info": {
+		"_postman_id": "2f6a500b-9141-4fe0-b176-a53a07200784",
+		"name": "Data-driven tests using external data files",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "12082892"
+	},
+	"item": [
+		{
+			"name": "Generate reference",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"const response = pm.response.json();",
+							"",
+							"pm.test(\"Should contain reference id\", function () {",
+							"    pm.expect(response.uuid).to.exist;",
+							"});",
+							"",
+							"pm.variables.set(\"referenceId\", response.uuid);"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "httpbin.org/uuid",
+					"host": [
+						"httpbin",
+						"org"
+					],
+					"path": [
+						"uuid"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create order",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"const response = pm.response.json();",
+							"",
+							"if (pm.variables.get(\"isValid\") === \"true\" || pm.variables.get(\"isValid\") === true) {",
+							"",
+							"pm.test(\"Should contain the reference id\", function () {",
+							"    pm.expect(response.json.referenceId).to.eql(pm.variables.get(\"referenceId\"));",
+							"});",
+							"",
+							"pm.test(\"Should contain the customer id\", function () {",
+							"    pm.expect(response.json.customerId).to.eql(parseInt(pm.variables.get(\"customerId\")));",
+							"});",
+							"",
+							"pm.test(\"Should contain the product id\", function () {",
+							"    pm.expect(response.json.productId).to.eql(parseInt(pm.variables.get(\"productId\")));",
+							"});",
+							"",
+							"} else {",
+							"",
+							"pm.test(\"Should not be valid\", function () {",
+							"pm.expect(response.json).to.be.null;",
+							"",
+							"});",
+							"",
+							"}",
+							""
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"pm.variables.set(\"metaInfo\", JSON.stringify(pm.iterationData.get(\"metaInfo\")));\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"referenceId\": \"{{referenceId}}\",\n\t\"customerId\": {{customerId}},\n    \"productId\": {{productId}},\n    \"metaInfo\": {{metaInfo}}\n}"
+				},
+				"url": {
+					"raw": "httpbin.org/post",
+					"host": [
+						"httpbin",
+						"org"
+					],
+					"path": [
+						"post"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Check status",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is \" + pm.iterationData.get(\"expectedStatus\"), function () {",
+							"    pm.response.to.have.status(pm.iterationData.get(\"expectedStatus\"));",
+							"});",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/x-www-form-urlencoded",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "httpbin.org/status/{{status}}",
+					"host": [
+						"httpbin",
+						"org"
+					],
+					"path": [
+						"status",
+						"{{status}}"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "customerId",
+			"value": "5000",
+			"type": "string"
+		},
+		{
+			"key": "productId",
+			"value": "12",
+			"type": "string"
+		},
+		{
+			"key": "isValid",
+			"value": "true",
+			"type": "string"
+		}
+	]
+}
